@@ -5,14 +5,18 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.apache.log4j.Logger;
+
+import com.jsp_myblog.user.command.UserSignupCommand;
 import com.jsp_myblog.util.JdbcUtil;
 
 public class UserDao {
 	
-	private String connectionUrl = "jdbc:mysql://localhost:3306/blog";
+	private String connectionUrl = "jdbc:mysql://b075e7f6a12e97:d108dc28@us-cdbr-east-03.cleardb.com/heroku_bf93596590ef5a3?reconnect=true";
 	private Connection conn = null;
 	private PreparedStatement pstmt = null;
 	private ResultSet rs = null;
+	static final Logger logger = Logger.getLogger(UserSignupCommand.class);
 	
 	private final String USER_CHECK = "select * from users where id = ?";
 	private final String USER_SIGNUP = "insert into users(password, name, email, secretKey) values(?, ?, ?, ?)";
@@ -24,14 +28,16 @@ public class UserDao {
 	public String getSecretKey(String id) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(connectionUrl, "newuser", "password");
+			conn = DriverManager.getConnection(connectionUrl, "b075e7f6a12e97", "d108dc28");
 			String query = SECRET_KEY;
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, id);
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
-				return rs.getString("secretKey");
+				String secretKey = rs.getString("secretKey");
+				logger.debug(secretKey);
+				return secretKey;
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -44,7 +50,7 @@ public class UserDao {
 	private boolean checkUser(String id) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(connectionUrl, "newuser", "password");
+			conn = DriverManager.getConnection(connectionUrl, "b075e7f6a12e97", "d108dc28");
 			String query = USER_CHECK;
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, id);
@@ -65,7 +71,7 @@ public class UserDao {
 		try {
 			if(checkUser(id)) {
 				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection(connectionUrl, "newuser", "password");
+				conn = DriverManager.getConnection(connectionUrl, "b075e7f6a12e97", "d108dc28");
 				String query = USER_SIGNUP;
 				pstmt = conn.prepareStatement(query);
 				pstmt.setString(1, password);
@@ -86,7 +92,7 @@ public class UserDao {
 	public String login(String id, String password) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(connectionUrl, "newuser", "password");
+			conn = DriverManager.getConnection(connectionUrl, "b075e7f6a12e97", "d108dc28");
 			String query = USER_LOGIN;
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, id);
