@@ -19,7 +19,7 @@ public class UserDao {
 	static final Logger logger = Logger.getLogger(UserSignupCommand.class);
 	
 	private final String USER_CHECK = "select * from users where id = ?";
-	private final String USER_SIGNUP = "insert into users(password, name, email, secretKey) values(?, ?, ?, ?)";
+	private final String USER_SIGNUP = "insert into users(id, password, name, email, secretKey) values(?, ?, ?, ?, ?)";
 	private final String USER_LOGIN = "select name from users where id = ? and password = ?";
 	private final String SECRET_KEY = "select secretKey from users where id = ?";
 	
@@ -35,9 +35,7 @@ public class UserDao {
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
-				String secretKey = rs.getString("secretKey");
-				logger.debug(secretKey);
-				return secretKey;
+				return rs.getString("secretKey");
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -74,10 +72,11 @@ public class UserDao {
 				conn = DriverManager.getConnection(connectionUrl, "b075e7f6a12e97", "d108dc28");
 				String query = USER_SIGNUP;
 				pstmt = conn.prepareStatement(query);
-				pstmt.setString(1, password);
-				pstmt.setString(2, name);
-				pstmt.setString(3, email);
-				pstmt.setString(4, secretKey);
+				pstmt.setString(1, id);
+				pstmt.setString(2, password);
+				pstmt.setString(3, name);
+				pstmt.setString(4, email);
+				pstmt.setString(5, secretKey);
 				pstmt.executeUpdate();
 			}
 			
